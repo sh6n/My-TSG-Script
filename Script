@@ -1,0 +1,411 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+function sendnotif(title, message)
+    game.StarterGui:SetCore("SendNotification", {
+        Title = title,
+        Text = message,
+        Icon = "rbxassetid://12319510751",
+        Duration = 3,
+    })
+    end
+
+local Window = Fluent:CreateWindow({
+    Title = "Fluent " .. Fluent.Version,
+    SubTitle = "by 6Chxos",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = false, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Darker",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+--// Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
+local Tabs = {
+    Home = Window:AddTab({ Title = "Home", Icon = "home" }),
+    Player = Window:AddTab({ Title = "Player", Icon = "user" }),
+    Gamepass = Window:AddTab({ Title = "Gamepasses", Icon = "bookmark" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+    --// Home ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+    local InfoSection = Tabs.Home:AddSection("Information") -- Section
+
+    --// Player -------------------------------------------------------------------------------------------------------------------------------------------------
+
+    -------------------------------------- Movement Section --------------------------------------
+    local MovementSection = Tabs.Player:AddSection("Movement") -- Section
+
+    ------ Speed
+    ---
+    -- 1) Toggle Part
+
+    --[[
+    local SpeedToggle = Tabs.Player:AddToggle("Speed", {Title = "Speed", Default = false })
+
+    SpeedToggle:OnChanged(function()
+        if Options.Speed.Value then
+            print("Speed : enabled !")
+        else 
+            print("Speed : disabled !")
+        end
+    end)
+
+    Options.Speed:SetValue(false) -- Default value
+    
+
+    -- 2) Slider Part
+
+    local SpeedSlider = Tabs.Player:AddSlider("Slider", {
+        Title = "Speed Value",
+        Description = "",
+        Default = 0,
+        Min = 0,
+        Max = 30,
+        Rounding = 0,
+        Callback = function(Value)
+            Value = Value
+        end
+    })
+
+    SpeedSlider:SetValue(0)
+    ]]
+
+    ------ Swim Speed Bonus
+    
+    local SwimSlider = Tabs.Player:AddSlider("Slider", {
+        Title = "Swim Speed Bonus",
+        Description = "",
+        Default = 0,
+        Min = 0,
+        Max = 300,
+        Rounding = 0,
+        Callback = function(Value)
+            game.Players.LocalPlayer.Air:SetAttribute("SpeedBonus", Value)
+        end
+    })
+
+    SwimSlider:SetValue(0)
+
+    ------ Infinite Stamina
+
+    local StamToggle = Tabs.Player:AddToggle("Toggle_Stam", {Title = "Infinite Stamina", Default = false })
+
+    StamToggle:OnChanged(function()
+        game.Players.LocalPlayer.Character.stamina.Disabled = Options.Toggle_Stam.Value
+    end)
+
+    Options.Toggle_Stam:SetValue(false) -- Default value
+
+    -------------------------------------- Immunity Section --------------------------------------
+    
+    local ImmunitySection = Tabs.Player:AddSection("Immunity") -- Section
+
+    ------ Auto Air Bubble
+
+    local AirToggle = Tabs.Player:AddToggle("air", {Title = "Auto Air Bubble", Default = false })
+
+    AirToggle:OnChanged(function()
+        if Options.air.Value then
+            print("Auto Air Bubble : enabled !")
+        else 
+            print("Auto Air Bubble : disabled !")
+        end
+    end)
+    
+    Options.air:SetValue(false) -- Default value
+
+    ------ No Fall Damage
+
+    local FallToggle = Tabs.Player:AddToggle("Toggle_Fall", {Title = "No Fall Damage", Default = false })
+
+    FallToggle:OnChanged(function()
+        game.Players.LocalPlayer.Character.fallDamage.Disabled = Options.Toggle_Fall.Value
+    end)
+
+    Options.Toggle_Fall:SetValue(false) -- Default value
+
+    ------ Anti Thorns
+
+    local ThornsToggle = Tabs.Player:AddToggle("anti_thorns", {Title = "Anti Thorns", Default = false })
+
+    ThornsToggle:OnChanged(function()
+        if Options.anti_thorns.Value then
+            print("Anti Thorns : enabled !")
+        else 
+            print("Anti Thorns : disabled !")
+        end
+    end)
+    
+    Options.anti_thorns:SetValue(false) -- Default value
+
+    ------ Anti Volcano Ball
+
+    local VolcanoToggle = Tabs.Player:AddToggle("anti_volc", {Title = "Anti Volcano Ball", Default = false })
+
+    VolcanoToggle:OnChanged(function()
+        if Options.anti_volc.Value then
+            print("Anti Volcano Ball : enabled !")
+        else 
+            print("Anti Volcano Ball : disabled !")
+        end
+    end)
+    
+    Options.anti_volc:SetValue(false) -- Default value
+
+    --// Gamepasses ---------------------------------------------------------------------------------------------------------------------------------------------
+
+    -------------------------------------- Infinite Bag --------------------------------------
+
+    local BagToggle = Tabs.Gamepass:AddToggle("Toggle_Bag", {Title = "Infinite Bag", Default = false })
+
+    BagToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("InfiniteBag", Options.Toggle_Bag.Value)       
+    end)
+
+    Options.Toggle_Bag:SetValue(false)
+
+    -------------------------------------- Spawn Position --------------------------------------
+    
+    local SpawnPosToggle = Tabs.Gamepass:AddToggle("spawnpos", {Title = "Spawn Position", Default = false })
+
+    SpawnPosToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("PickSpawnPosition", Options.spawnpos.Value)
+    end)
+
+    Options.spawnpos:SetValue(false)
+
+    --[[ Useless Gamepasses (working but doesn't actually really work...)
+
+    local ExpToggle = Tabs.Player:AddToggle("x2exp", {Title = "X2 Experience", Default = false }) -- X2 Experience
+
+    ExpToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("x2_experience", Options.x2exp.Value)
+    end)
+
+    Options.x2exp:SetValue(false) -- Default value
+
+    -------------------------------------- X2 Hunger --------------------------------------
+    
+    local HungerToggle = Tabs.Player:AddToggle("x2hunger", {Title = "X2 Hunger", Default = false }) 
+
+    HungerToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("x2_hunger", Options.x2hunger.Value)
+    end)
+
+    Options.x2hunger:SetValue(false) -- Default value
+
+    -------------------------------------- X2 Resources --------------------------------------
+    
+    local ResourcesToggle = Tabs.Player:AddToggle("x2res", {Title = "X2 Resources", Default = false })
+
+    ResourcesToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("x2_resources", Options.x2res.Value)
+    end)
+
+    Options.x2res:SetValue(false) -- Default value
+
+    -------------------------------------- X2 Tool Damage --------------------------------------
+    
+    local ToolToggle = Tabs.Player:AddToggle("x2tool", {Title = "X2 Tool Damage", Default = false })
+
+    ToolToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("x2_tool_damage", Options.x2tool.Value)
+    end)
+
+    Options.x2tool:SetValue(false) -- Default value
+
+    -------------------------------------- Advanced Kingdom Customization --------------------------------------
+    
+    local KingdomCustToggle = Tabs.Player:AddToggle("kingdcust", {Title = "Advanced Kingdom Customization", Default = false })
+
+    KingdomCustToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("advanced_kingdom_customization", Options.kingdcust.Value)
+    end)
+
+    Options.kingdcust:SetValue(false) -- Default value
+
+    -------------------------------------- X2 Hunger --------------------------------------
+    
+    local CosmeticsToggle = Tabs.Player:AddToggle("cosmetics", {Title = "Advanced Cosmetics", Default = false })
+
+    CosmeticsToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("advanced_cosmetics", Options.cosmetics.Value)
+    end)
+
+    Options.cosmetics:SetValue(false) -- Default value
+
+    --------------------------------------
+    
+    local NPCsToggle = Tabs.Player:AddToggle("npcs", {Title = "10 More NPCs", Default = false }) -- 10 More NPCs
+
+    NPCsToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("10_More_NPCs", Options.npcs.Value)
+    end)
+
+    Options.npcs:SetValue(false) -- Default value
+
+    --------------------------------------
+
+    local PaintToggle = Tabs.Player:AddToggle("paint", {Title = "Paint Tool", Default = false }) -- Paint Tool
+
+    PaintToggle:OnChanged(function()
+        game.Players.LocalPlayer:SetAttribute("paint_tool", Options.paint.Value)
+    end)
+
+    Options.paint:SetValue(false) -- Default value  
+
+    !! Closing comment !! ]]
+
+    --// Unfinished ---------------------------------------------------------------------------------------------------------------------------------------------
+
+    --// Working on...
+
+    --[[
+    local Dropdown = Tabs.Player:AddDropdown("Dropdown", {
+        Title = "Dropdown",
+        Values = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"},
+        Multi = false,
+        Default = 1,
+    })
+
+    Dropdown:SetValue("four")
+ 
+    local MultiDropdown = Tabs.Player:AddDropdown("MultiDropdown", {
+        Title = "Dropdown",
+        Description = "You can select multiple values.",
+        Values = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"},
+        Multi = true,
+        Default = {"seven", "twelve"},
+    })
+
+    MultiDropdown:SetValue({
+        three = true,
+        five = true,
+        seven = false
+    })
+
+    MultiDropdown:OnChanged(function(Value)
+        local Values = {}
+        for Value, State in next, Value do
+            table.insert(Values, Value)
+        end
+        print("Mutlidropdown changed:", table.concat(Values, ", "))
+    end)
+
+    local Colorpicker = Tabs.Player:AddColorpicker("Colorpicker", {
+        Title = "Colorpicker",
+        Default = Color3.fromRGB(96, 205, 255)
+    })
+    
+    Colorpicker:SetValueRGB(Color3.fromRGB(0, 255, 140))
+
+    local TColorpicker = Tabs.Player:AddColorpicker("TransparencyColorpicker", {
+        Title = "Colorpicker",
+        Description = "but you can change the transparency.",
+        Transparency = 0,
+        Default = Color3.fromRGB(96, 205, 255)
+    })
+
+    TColorpicker:OnChanged(function()
+        print(
+            "TColorpicker changed:", TColorpicker.Value,
+            "Transparency:", TColorpicker.Transparency
+        )
+    end)
+
+    local Keybind = Tabs.Player:AddKeybind("Keybind", {
+        Title = "KeyBind",
+        Mode = "Toggle", -- Always, Toggle, Hold
+        Default = "LeftControl", -- String as the name of the keybind (MB1, MB2 for mouse buttons)
+
+        -- Occurs when the keybind is clicked, Value is `true`/`false`
+        Callback = function(Value)
+            print("Keybind clicked!", Value)
+        end,
+    })
+
+    -- OnClick is only fired when you press the keybind and the mode is Toggle
+    -- Otherwise, you will have to use Keybind:GetState()
+    Keybind:OnClick(function()
+        print("Keybind clicked:", Keybind:GetState())
+    end)
+
+    Keybind:OnChanged(function()
+        print("Keybind changed:", Keybind.Value)
+    end)
+
+    task.spawn(function()
+        while true do
+            wait(1)
+
+            -- example for checking if a keybind is being pressed
+            local state = Keybind:GetState()
+            if state then
+                print("Keybind is being held down")
+            end
+
+            if Fluent.Unloaded then break end
+        end
+    end)
+
+    Keybind:SetValue("MB2", "Toggle") -- Sets keybind to MB2, mode to Hold
+
+    local Input = Tabs.Player:AddInput("Input", {
+        Title = "Input",
+        Default = "Default",
+        Placeholder = "Placeholder",
+        Numeric = false, -- Only allows numbers
+        Finished = false, -- Only calls callback when you press enter
+        Callback = function(Value)
+            print("Input changed:", Value)
+        end
+    })
+
+    Input:OnChanged(function()
+        print("Input updated:", Input.Value)
+    end)
+    ]]
+end
+
+--// Don't Touch -------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Addons:
+-- SaveManager (Allows you to have a configuration system)
+-- InterfaceManager (Allows you to have a interface managment system)
+
+-- Hand the library over to our managers
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+-- Ignore keys that are used by ThemeManager.
+-- (We dont want configs to save themes, do we ?)
+SaveManager:IgnoreThemeSettings()
+
+-- You can add indexes of elements the save manager should ignore
+SaveManager:SetIgnoreIndexes({})
+
+-- Use case for doing it this way:
+-- A script hub could have themes in a global folder
+-- And game configs in a separate folder per game
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "chaos.lua",
+    Content = "The script has been loaded!",
+    Duration = 1
+})
+
+SaveManager:LoadAutoloadConfig()
